@@ -47,7 +47,7 @@ class GameLevel {
       bound: 'wrap',
       image: this.game.res_running0,
       anim: {
-        play: false
+        play: false, speed: 0
       }
     };
 
@@ -60,7 +60,7 @@ class GameLevel {
       bound: 'wrap',
       image: this.game.res_running1,
       anim: {
-        play: false
+        play: false, speed: 0
       }
     };
 
@@ -73,7 +73,7 @@ class GameLevel {
       bound: 'wrap',
       image: this.game.res_running2,
       anim: {
-        play: false
+        play: false, speed: 0
       }
     };
 
@@ -86,7 +86,7 @@ class GameLevel {
       bound: 'wrap',
       image: this.game.res_running3,
       anim: {
-        play: false
+        play: false, speed: 0
       }
     };
 
@@ -99,7 +99,7 @@ class GameLevel {
       bound: 'wrap',
       image: this.game.res_running4,
       anim: {
-        play: false
+        play: false, speed: 0
       }
     };
 
@@ -113,7 +113,7 @@ class GameLevel {
       bound: 'wrap',
       image: this.game.res_running_shadow,
       anim: {
-        play: false
+        play: false, speed: 0
       }
     };
 
@@ -153,14 +153,14 @@ class GameLevel {
     shadow.linkPos(player, 10, 10);
     shadow.linkAnim(player);
 
-    for (var i = 0; i < 15; i++) {
+    for (var i = 0; i < 1; i++) {
       var ex = (Math.random() * this.width);
       var ey = (Math.random() * this.height);
 
       var spritenr = Math.floor(Math.random() * 4) + 1;
       console.log(spritenr);
-      var enemyShadow = this.addSprite('shadow', 10 + ex, 10 + ey, .1, .1, this.shadows);
       var enemy = this.addSprite('enemy' + spritenr, ex, ey, .1, .1, this.sprites);
+      var enemyShadow = this.addSprite('shadow', 10 + ex, 10 + ey, .1, .1, this.shadows);
       enemyShadow.linkPos(enemy, 10, 10);
       enemyShadow.linkAnim(enemy);
 
@@ -173,6 +173,28 @@ class GameLevel {
     this.updateLists();
 
     var levelMod = (this.lCounter) % 4;
+
+    console.log( this.game.width );
+    console.log( this.game.height );
+    var blockImg = new BlockImage( this.game.width, this.game.height );
+    this.res_ground  = blockImg;
+    this.res_ground_ctx   = blockImg.getContext();
+    this.res_ground_cvs   = blockImg.getCanvas();
+
+    var gh = this.game.res_ground_tiles.gridh;
+    var gw = this.game.res_ground_tiles.gridw;
+    var cols = Math.ceil( this.width / gw );
+    var rows = Math.ceil( this.height / gh );
+    for( var c=0; c<cols; c++) {
+      for( var r=0; r<rows; r++) {
+        this.game.res_ground_tiles.drawTile(
+            this.res_ground_ctx,
+            c *gw,
+            r *gh,
+            0
+        );
+      }
+    }
 
   }
 
@@ -396,11 +418,6 @@ class GameLevel {
   startSceneRender(context) {
     this.playRender(context);
 
-    //var shortCounter = Math.ceil( this.nextLevelCounter / 50 );
-    //var str = 'START IN: ' + shortCounter;
-    //var x=this.game.res_font2.centerX( str, this.width );
-    //this.game.res_font2.drawString( context, x, 250 , str );
-
   }
 
 
@@ -609,7 +626,7 @@ class GameLevel {
         targetX = sprite.getData().targetX;
         targetY = sprite.getData().targetY;
 
-        console.log("fire!!" + this.lastDirection);
+        console.log("change direction!!" + this.lastDirection);
 
       }
 
@@ -642,6 +659,7 @@ class GameLevel {
 
       if ((Math.random() * 5000 > 4900) && travel) {
         fire = true;
+        fire = false;
       }
       if (fire) {
         var bullet = this.addSprite('enemybullet', sprite.x, sprite.y, 0, 0, this.sprites );
@@ -655,6 +673,8 @@ class GameLevel {
       }
 
 
+      var speed = .2 + (1 * (this.panic));
+
 
       if (travel > 0 && (old_dxdy[0] != (newdx * speed) || old_dxdy[1] != (newdy * speed))) {
 
@@ -664,7 +684,7 @@ class GameLevel {
 
       }
 
-      var speed = .2 + (1 * (this.panic));
+
       sprite.setDXDY(newdx * speed, newdy * speed);
     }
 
@@ -682,31 +702,8 @@ class GameLevel {
 
   collide() {
 
-/*
-    this.game.res_ground_plaindirt_ctx.drawImage(
-      this.game.res_skull_ori,
-      //xy[0] - (this.game.res_skulltmp.width/2),
-      //xy[1]  - (this.game.res_skulltmp.height/2)
-      100,100
-    );
-
-
-    this.game.res_ground_plaindirt_ctx.drawImage(
-      this.game.res_skull_cvs,
-      //xy[0] - (this.game.res_skulltmp.width/2),
-      //xy[1]  - (this.game.res_skulltmp.height/2)
-      100,150
-    );
-*/
-
-
-
-//this.sprites.render(bgctx);
-
     var c = this.sprites.detectColissions();
     if (c.length > 0) {
-      //console.log('collide ' + c.length);
-      //console.log(c);
 
       for (var i = 0; i < c.length; i++) {
 
@@ -805,36 +802,16 @@ class GameLevel {
 
   render(context) {
 
-    /*context.fillStyle = 'rgba( 48,0,48,1)';
-    context.fillRect(
-      0,
-      0,
-      this.width,
-      this.height
-    );*/
 
     context.drawImage(
-      this.game.res_ground_plaindirt_cvs,
+      this.res_ground_cvs,
       0, 0,
       this.width, this.height
     );
 
-
-    /*    var str, x;
-        str = 'SCORE: ' + this.game.score;
-        x=this.game.res_font2.centerX( str, this.width );
-        this.game.res_font2.drawString( context, x, 10 , str );
-
-
-        str = 'LEVEL: ' + this.lCounter + "    LIVES: " + this.game.lives;
-        x=this.game.res_font2.centerX( str, this.width );
-        this.game.res_font2.drawString( context, x, 35 , str );
-    */
     this.shadows.render(context);
     this.sprites.render(context);
 
-
-    //    this.drawBar( context, this.height - 50 );
 
   }
 

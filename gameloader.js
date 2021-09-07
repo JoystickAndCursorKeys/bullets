@@ -31,45 +31,49 @@ class GameLoader {
     bgColor = {r:253, g:67, b:251};
     id = 'res_running0';
     pictures[ id ]= 'res/anim/' + id.substring(4) + '.bmp';
-    this.data[ id ]={  type: 'anim',   w:40, h:40, bg: bgColor };
+    this.data[ id ]={  type: 'spriteanim',   w:40, h:40, bg: bgColor };
 
     bgColor = {r:234, g:93, b:236};
     id = 'res_running1';
     pictures[ id ]= 'res/anim/' + id.substring(4) + '.bmp';
-    this.data[ id ]={  type: 'anim',   w:40, h:40, bg: bgColor };
+    this.data[ id ]={  type: 'spriteanim',   w:40, h:40, bg: bgColor };
 
     bgColor = { r:236, g:93, b:220};
     id = 'res_running2';
     pictures[ id ]= 'res/anim/' + id.substring(4) + '.bmp';
-    this.data[ id ]={  type: 'anim',   w:40, h:40, bg: bgColor };
+    this.data[ id ]={  type: 'spriteanim',   w:40, h:40, bg: bgColor };
 
     bgColor = {r:217, g:215, b:178};
     id = 'res_running3';
     pictures[ id ]= 'res/anim/' + id.substring(4) + '.bmp';
-    this.data[ id ]={  type: 'anim',   w:40, h:40, bg: bgColor };
+    this.data[ id ]={  type: 'spriteanim',   w:40, h:40, bg: bgColor };
 
     bgColor = {r:236, g:93, b:187};
     id = 'res_running4';
     pictures[ id ]= 'res/anim/' + id.substring(4) + '.bmp';
-    this.data[ id ]={  type: 'anim',   w:40, h:40, bg: bgColor4 };
+    this.data[ id ]={  type: 'spriteanim',   w:40, h:40, bg: bgColor4 };
 
 
     bgColor = {r:253, g:67, b:251};
     id = 'res_running_shadow';
     pictures[ id ]= 'res/anim/' + id.substring(4) + '.bmp';
-    this.data[ id ]={  type: 'anim',   w:40, h:40, bg: bgColor };
+    this.data[ id ]={  type: 'spriteanim',   w:40, h:40, bg: bgColor };
 
     id='res_bullet';
     pictures[id]= 'res/gfx/' + id.substring(4) + '.bmp';
-    this.data[ id ]={ type: 'img',  bg: bgColor2 };
+    this.data[ id ]={ type: 'spriteimage',  bg: bgColor2 };
 
     id='res_skull';
     pictures[id]= 'res/gfx/skull.png';
-    this.data[ id ]={ type: 'img', bg: bgColor5 };
+    this.data[ id ]={ type: 'spriteimage', bg: bgColor5 };
 
-    id='res_ground_plaindirt';
-    pictures[id]= 'res/gfx/ground-plaindirt.png';
-    this.data[ id ]={ type: 'background-scale' };
+    id='res_ground_tiles';
+    pictures[id]= 'res/gfx/tiles/tiles.png';
+    this.data[ id ]={ type: 'tiles', w:256, h:256, bg: null };
+
+    //id='res_ground_plaindirt';
+    //pictures[id]= 'res/gfx/ground-plaindirt.png';
+    //this.data[ id ]={ type: 'background-scale' };
 
     id='res_font1';
     pictures[id]= 'res/font/sunset_medium1_36x45.png';
@@ -82,7 +86,6 @@ class GameLoader {
     id='res_font3';
     pictures[id]= 'res/font/greendawn_medium1_36x45.png';
     this.data[ id ]={ type: 'font',  w:36, h:45, bg: {r:0, g:0, b:0} };
-
 
 
     var audio = [];
@@ -115,13 +118,13 @@ class GameLoader {
         pic = imgarr[ id ];
         rd = this.data[ id ];
 
-        if( rd.type == 'anim' ) {
+        if( rd.type == 'spriteanim' ) {
 
           this.game[id] = new SpriteAnim( pic , rd.w, rd.h, rd.bg,
               this.collisBoxRes
             );
         }
-        else if( rd.type == 'img' ) {
+        else if( rd.type == 'spriteimage' ) {
 
 
           var si = new SpriteImage( pic , rd.bg,
@@ -134,6 +137,12 @@ class GameLoader {
         else if( rd.type == 'font' ) {
 
           this.game[id]   = new BlockFont(
+              pic,
+              rd.w, rd.h, rd.bg
+            );
+        }
+        else if( rd.type == 'tiles' ) {
+          this.game[id]   = new Tiles(
               pic,
               rd.w, rd.h, rd.bg
             );
