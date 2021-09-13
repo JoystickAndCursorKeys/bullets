@@ -4,7 +4,7 @@ class GameLoader {
     this.game = game;
     this.level = level;
     this.data = [];
-
+    this.magic = new SpriteImageMagic();
 
     this.collisBoxRes = {
       xGranularity: 8,
@@ -19,7 +19,9 @@ class GameLoader {
 
     var pictures = [];
     var id;
-    var bgColor, bgColor1, bgColor2, bgColor3, bgColor4, bgColor5;
+    var bgColor, bgColor1, bgColor2, bgColor3, bgColor4, bgColor5,
+        bgColor6,bgColor7
+        ;
 
     bgColor = {r:253, g:67, b:251};
     bgColor1 = {r:234, g:93, b:236};
@@ -27,6 +29,8 @@ class GameLoader {
     bgColor3 = {r:217, g:215, b:178};
     bgColor4 = {r:236, g:93, b:187};
     bgColor5 = {r:49, g:231, b:43};
+    bgColor6 = {r:154, g:56, b:161};
+    bgColor7 = {r:231, g:43, b:229};
 
     bgColor = {r:253, g:67, b:251};
     id = 'res_running0';
@@ -63,6 +67,43 @@ class GameLoader {
     pictures[id]= 'res/gfx/' + id.substring(4) + '.bmp';
     this.data[ id ]={ type: 'spriteimage',  bg: bgColor2 };
 
+    id='res_heliblades';
+    pictures[id]= 'res/gfx/helicopter-blades.png';
+    this.data[ id ]={ type: 'spriteimage',  bg: bgColor6 };
+
+    id='res_heliframe';
+    pictures[id]= 'res/gfx/helicopter-body.png';
+    this.data[ id ]={ type: 'spriteimage',  bg: bgColor6 };
+
+    id='res_heliframeshadow';
+    pictures[id]= 'res/gfx/helicopter-body.png';
+    this.data[ id ]={
+        type: 'spriteimage',
+        bg: [
+            { f:this.magic.scale, par: 0.5 },
+            { f:this.magic.mkShadow1, par: bgColor6 }
+          ]
+      };
+
+    id='res_parachute';
+    pictures[id]= 'res/gfx/parachute.png';
+    this.data[ id ]={ type: 'spriteimage',  bg: bgColor7 };
+
+    id='res_parachute_landed';
+    pictures[id]= 'res/gfx/parachute-landed.png';
+    this.data[ id ]={ type: 'spriteimage',  bg: bgColor7 };
+
+    id='res_parachuteshadow';
+    pictures[id]= 'res/gfx/parachute.png';
+    this.data[ id ]={
+        type: 'spriteimage',
+        bg: [
+          { f:this.magic.scale, par: 0.5 },
+          { f:this.magic.mkShadow1, par: bgColor7 }
+        ]
+      };
+
+
     id='res_skull';
     pictures[id]= 'res/gfx/skull.png';
     this.data[ id ]={ type: 'spriteimage', bg: bgColor5 };
@@ -70,10 +111,6 @@ class GameLoader {
     id='res_ground_tiles';
     pictures[id]= 'res/gfx/tiles/tiles.png';
     this.data[ id ]={ type: 'tiles', w:256, h:256, bg: null };
-
-    //id='res_ground_plaindirt';
-    //pictures[id]= 'res/gfx/ground-plaindirt.png';
-    //this.data[ id ]={ type: 'background-scale' };
 
     id='res_font1';
     pictures[id]= 'res/font/sunset_medium1_36x45.png';

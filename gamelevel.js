@@ -128,6 +128,72 @@ class GameLevel {
       anim: null
     };
 
+    st['parachute'] = {
+      type: 'parachute',
+      health: undefined,
+      size: undefined,
+      colliding: false,
+      next: null,
+      bound: 'disappear',
+      image: this.game.res_parachute,
+      anim: null
+    };
+
+    st['parachutelanded'] = {
+      type: 'parachute-landed',
+      health: undefined,
+      size: undefined,
+      colliding: false,
+      next: null,
+      bound: 'disappear',
+      image: this.game.res_parachute_landed,
+      anim: null
+    };
+
+    st['parachuteshadow'] = {
+      type: 'parachute',
+      health: undefined,
+      size: undefined,
+      colliding: false,
+      next: null,
+      bound: 'disappear',
+      image: this.game.res_parachuteshadow,
+      anim: null
+    };
+
+    st['heliframe'] = {
+      type: 'helicopter',
+      health: undefined,
+      size: undefined,
+      colliding: false,
+      next: null,
+      bound: 'disappear',
+      image: this.game.res_heliframe,
+      anim: null
+    };
+
+    st['heliframeshadow'] = {
+      type: 'helicopter',
+      health: undefined,
+      size: undefined,
+      colliding: false,
+      next: null,
+      bound: 'disappear',
+      image: this.game.res_heliframeshadow,
+      anim: null
+    };
+
+    st['heliblades'] = {
+      type: 'helicopter',
+      health: undefined,
+      size: undefined,
+      colliding: false,
+      next: null,
+      bound: 'disappear',
+      image: this.game.res_heliblades,
+      anim: null
+    };
+
     st['enemybullet'] = {
       type: 'enemybullet',
       health: undefined,
@@ -139,19 +205,12 @@ class GameLevel {
       anim: null
     };
 
+    this.frontsprites = new SpriteMover();
     this.sprites = new SpriteMover();
     this.shadows = new SpriteMover();
 
-    var shadow = this.addSprite('shadow', 10 + this.width / 2, 10 + this.height / 2, .1, .1, this.shadows);
-    this.shadow = shadow;
-
-    var player = this.addSprite('player', this.width / 2, this.height / 2, .1, .1, this.sprites);
-    this.player = player;
 
     this.panic = 0;
-
-    shadow.linkPos(player, 10, 10);
-    shadow.linkAnim(player);
 
     for (var i = 0; i < 1; i++) {
       var ex = (Math.random() * this.width);
@@ -164,8 +223,8 @@ class GameLevel {
       enemyShadow.linkPos(enemy, 10, 10);
       enemyShadow.linkAnim(enemy);
 
-      enemy.getData().targetX = player.x;
-      enemy.getData().targetY = player.y;
+      enemy.getData().targetX = this.width/2;
+      enemy.getData().targetY = this.height/2;
       enemy.getData().targetClock = 100;
     }
 
@@ -223,11 +282,7 @@ class GameLevel {
     this.speed = 0;
     this.endFlag = false;
 
-    this.player.setFrame(this.iAngle);
-    this.player.resetEffects();
 
-    this.shadow.setFrame(this.iAngle);
-    this.shadow.resetEffects();
 
 
   }
@@ -388,31 +443,115 @@ class GameLevel {
   /*
   the "cutscene" for when a player starts
   */
-  startScene() {
-    this.nextLevelCounter = 0; //150;
-    this.endFlag = false;
+
+  startScene( statelett ) {
+
+    if( statelett == 'INIT' ) {
+      this.endFlag = false;
+
+      this.heli = this.addSprite('heliframe',
+          0, 100,
+          5, 0,
+          this.sprites);
+
+      this.heli = this.addSprite('heliframeshadow',
+          150, 250,
+          5, 0,
+          this.shadows);
+
+      this.heliblades = this.addSprite('heliblades',
+          70, 100,
+          5, 0,
+          this.frontsprites);
+
+      this.heliblades.setRotateIncrease(1);
+      this.parachute = null;
+
+    }
 
   }
 
-  /*startSceneHandle( evt ) {
-    this.playHandle(evt);
-  }*/
-
-
   startSceneRun() {
-
-    this.playHandleInput();
-    this.input.fire = false;
 
 
     this.playRunProcessor2(false);
 
-    this.nextLevelCounter--;
-    if (this.nextLevelCounter > 0) {
-      return false;
+    if( !this.heli.active ) {
+        return "next";
     }
 
-    return "next";
+    if( !this.parachute ) {
+      if( this.heli.x>300) {
+        this.parachute = this.addSprite('parachute',
+            this.heli.x-50, this.heli.y-50,
+            2, 2,
+            this.sprites);
+
+        this.parachute.setScaleFactor(.995);
+        this.parachute.setRotateIncrease(.01);
+
+        this.parachuteshadow = this.addSprite('parachuteshadow',
+            0, 0,
+            0, 0,
+            this.shadows);
+
+        this.parachuteshadow.linkPos(this.parachute, 150, 150);
+        this.parachuteshadow.setLinkXoYoFactor(0.98);
+
+
+      }
+    }
+    else  {
+      if( this.parachute != "done") {
+      if( this.parachute.effects.scale < .5 ) {
+        var player = this.addSprite('player',
+            this.parachute.x, this.parachute.y,
+              .1, .1, this.sprites);
+
+
+        this.player = player;
+
+        var shadow = this.addSprite('shadow', 10 + this.width / 2, 10 + this.height / 2, .1, .1, this.shadows);
+        this.shadow = shadow;
+        shadow.linkPos(player, 10, 10);
+        shadow.linkAnim(player);
+
+        this.player.setFrame(this.iAngle);
+        this.player.resetEffects();
+
+        this.shadow.setFrame(this.iAngle);
+        this.shadow.resetEffects();
+
+
+
+        //this.landed = this.addSprite('parachutelanded',
+        //    this.parachute.x, this.parachute.y,
+        //      .1, .1, this.sprites);
+
+
+        //this.landed.draw( this.res_ground_ctx );
+        //this.landed.deactivate();
+        this.parachute.setFadeFactor(.98);
+        //this.parachute.setDXDY(0,0);
+        this.parachute.adjustScaleFactor(1.01);
+        //this.parachute.deactivate();
+        this.parachuteshadow.deactivate();
+        this.parachute = "done";
+
+
+
+
+        return "next";
+      }
+      else { //parachute still in the air
+        //this.parachuteshadow.factorLinkXoYo(.98);
+      }
+      }
+    }
+
+
+    return false;
+
   }
 
   startSceneRender(context) {
@@ -597,6 +736,9 @@ class GameLevel {
     var dx = Math.sin(rad) * this.speed;
     var dy = Math.cos(rad) * this.speed;
 
+    if( this.player ) {
+
+
     this.player.setDXDY(dx, dy);
 
     var input = this.input;
@@ -688,7 +830,9 @@ class GameLevel {
       sprite.setDXDY(newdx * speed, newdy * speed);
     }
 
+    }
     this.sprites.move();
+    this.frontsprites.move();
     this.shadows.move();
 
     if (normal) {
@@ -696,6 +840,7 @@ class GameLevel {
       this.collide();
     }
     this.sprites.animate();
+    this.frontsprites.animate();
     this.shadows.animate();
 
   }
@@ -811,7 +956,7 @@ class GameLevel {
 
     this.shadows.render(context);
     this.sprites.render(context);
-
+    this.frontsprites.render(context);
 
   }
 

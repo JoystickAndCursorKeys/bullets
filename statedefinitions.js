@@ -75,7 +75,7 @@ class StateDefinitions {
     var gamePlaybook = this.playbooks.game;
     gamePlaybook.states = {
         'load':                 { _type: "LOADSILENT",  next: 'loadLevel'},
-        'loadLevel':                 { _type: "LOADSILENT",  next: 'level.init'},
+        'loadLevel':            { _type: "LOADSILENT",  next: 'level.init'},
 
         'finishScene':          { _type: "WATCH", next: 'enterHighscore'},
         'gameOverScene':          { _type: "WATCH", next: 'calculateHighScore'},
